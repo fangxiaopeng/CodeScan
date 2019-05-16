@@ -102,6 +102,8 @@ public class DocumentUtil {
 			bitmap = BitmapFactory.decodeFile(fileName, options);
 		} catch (OutOfMemoryError error) {
 			error.printStackTrace();
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 		return bitmap;
 	}

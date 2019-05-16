@@ -50,6 +50,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     public static final String EXTRA_RESULT = "result";
     public static final String EXTRA_BITMAP = "bitmap";
     public static final int QRCODE_REUSLT = 3;
+    private static final int PERMISSION_REQUEST_CODE_CAMERA = 6;
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 7;
 
     private SurfaceView previewSv;
@@ -64,11 +65,14 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
     private boolean isDecoding = false;
     private Context mContext;
 
+    private SurfaceHolder surfaceHolder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
+
         mContext = CaptureActivity.this;
         previewSv = findViewById(R.id.sv_preview);
         captureView = findViewById(R.id.cv_capture);
@@ -82,6 +86,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             albumBtn.setVisibility(View.GONE);
         }
+
         previewSv.getHolder().addCallback(this);
         mCameraManager = new CameraManager(mContext);
         if (mCameraManager == null) {
@@ -89,13 +94,11 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             finish();
         }
         mCameraManager.setPreviewFrameShotListener(this);
-
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    private void init(){
         try {
-            mCameraManager.initCamera(holder);
+            mCameraManager.initCamera(surfaceHolder);
         } catch (Exception e) {
             Toast.makeText(mContext, R.string.capture_camera_failed, Toast.LENGTH_SHORT).show();
             finish();
@@ -107,6 +110,17 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
         mCameraManager.startPreview();
         if (!isDecoding) {
             mCameraManager.requestPreviewFrameShot();
+        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        surfaceHolder = holder;
+        int checked = ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA);
+        if (checked == PackageManager.PERMISSION_GRANTED) {
+            init();
+        } else {
+            ActivityCompat.requestPermissions(CaptureActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE_CAMERA);
         }
     }
 
@@ -257,6 +271,14 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
                 goPicture();
             } else {
                 Toast.makeText(mContext, "请同意系统权限后继续", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else if (requestCode == PERMISSION_REQUEST_CODE_CAMERA){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                init();
+            } else {
+                Toast.makeText(mContext, "请同意系统权限后继续", Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
 
