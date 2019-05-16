@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">libzxing</string>
+
+    <string name="go_back">返回</string>
+    <string name="permissions_allow">请打开权限管理-->信任此应用</string>
+    <string name="QR_Code">二维码</string>
+    <string name="capture_album">相册</string>
+    <string name="capture_camera_failed">Camera disabled</string>
+    <string name="capture_decode_failed">No QRCode found</string>
 </resources>
