@@ -1,14 +1,11 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
 
-
-
     defaultConfig {
-        applicationId "com.fxp.libzxing"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
 
@@ -33,4 +30,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    api 'com.google.zxing:core:3.3.3'
+    api 'com.google.zxing:android-core:3.3.0'
+    api 'com.google.zxing:android-integration:3.3.0'
 }
